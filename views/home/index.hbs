@@ -1,11 +1,25 @@
 <h2>Snippets</h2>
 
 <table class="table table-hover">
-  <thead class="thead-light">
+  <head class="thead-light">
+  </head>
+  <body> 
+    <ul class="list-group">
+    {{#if viewData.snippets.length}}
+    {{#each viewData.snippets}}
     <tr>
-      <th scope="col">Created</th>
+      <th scope="row">{{this.createdAt}}</th>
+      <td>{{this.value}}</td>
     </tr>
-  </thead>
-  <tbody> 
-  </tbody>
+    {{/each}}
+    {{else}}
+    <tr colspan="2">
+      <td class="text-center">No snippets to display.</td>
+    </tr>
+    {{/if}}
+      <!--<li class="list-group-item">Author: {{{author}}} <br> Code snippet: {{{snippet}}}</li>-->
+      <!--<a href="/snippets/edit/{{this._id}}">Edit</a>-->
+        <!--<a href="/snippets/delete/{{this._id}}">Delete</a>-->
+    </ul>
+  </body>
 </table>

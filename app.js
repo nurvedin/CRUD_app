@@ -3,10 +3,16 @@
 const express = require('express')
 const hbs = require('express-hbs')
 const path = require('path')
-
+const mongoose = require('./config/mongoose.js')
 const app = express()
 
 app.use('/', require('./routes/homeRouter'))
+
+// Connect to the database.
+mongoose.connect().catch(error => {
+  console.error(error)
+  process.exit(1)
+})
 
 // Setup view engine.
 app.engine('hbs', hbs.express4({
