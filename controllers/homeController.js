@@ -8,7 +8,7 @@ const index = async (req, res) => {
       .map(snippet => ({
         id: snippet._id,
         author: snippet.author,
-        value: snippet.value
+        snippet: snippet.snippet
       }))
   }
   res.render('home/index', { viewData })
@@ -37,7 +37,8 @@ const addSnippet = (req, res) => {
 
 const addSnippet = async (req, res) => {
   const viewData = {
-    value: undefined
+    author: '',
+    snippet: ''
   }
   res.render('home/add', { viewData })
 }
@@ -45,15 +46,35 @@ const addSnippet = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const snippet = new Snippet({
-      author: req.author,
-      snippet: req.snippet
+      author: req.body.author,
+      snippet: req.body.snippet
     })
 
-    // ...save the number to the database...
     await snippet.save()
+
+    // ...and redirect and show a message.
+    res.redirect('.')
   } catch (error) {
     console.log(error)
   }
 }
 
 module.exports = { index, addSnippet, createPost }
+
+/*
+  try {
+    const snippet = new Snippet({
+      snippet: req.body.snippet
+    })
+
+    await snippet.save()
+
+    // ...and redirect and show a message.
+    res.redirect('.')
+  } catch (error) {
+    return res.render('home/add', {
+      author: req.body.author,
+      snippet: req.body.snippet
+    })
+  }
+*/

@@ -4,21 +4,18 @@ const mongoose = require('mongoose')
 
 // Create a schema, with customized error messages.
 const snippetSchema = new mongoose.Schema({
-  createdAt: {
-    type: Date,
-    required: true,
-    default: Date.now
+  author: {
+    type: String,
+    required: true
   },
   snippet: {
-    type: String
-  },
-  author: {
-    type: String
+    type: String,
+    required: true
   }
 })
 
 // Create a model using the schema.
-const snippet = mongoose.model('Snippet', snippetSchema)
+const Snippet = mongoose.model('Snippet', snippetSchema)
 
 // Export the model.
-module.exports = snippet
+module.exports = Snippet

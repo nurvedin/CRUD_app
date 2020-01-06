@@ -2,14 +2,18 @@
 
 <table class="table table-hover">
   <head class="thead-light">
+    <tr>
+      <th>Author</th>
+      <th>Code snippet</th>
+    </tr>
   </head>
   <body> 
     <ul class="list-group">
     {{#if viewData.snippets.length}}
     {{#each viewData.snippets}}
     <tr>
-      <th scope="row">{{this.createdAt}}</th>
-      <td>{{this.value}}</td>
+      <td>{{this.author}}</td>
+      <td>{{this.snippet}}</td>
     </tr>
     {{/each}}
     {{else}}

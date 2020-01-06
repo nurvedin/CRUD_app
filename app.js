@@ -5,8 +5,7 @@ const hbs = require('express-hbs')
 const path = require('path')
 const mongoose = require('./config/mongoose.js')
 const app = express()
-
-app.use('/', require('./routes/homeRouter'))
+const bodyParser = require('body-parser')
 
 // Connect to the database.
 mongoose.connect().catch(error => {
@@ -26,7 +25,15 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Parse application/x-www-form-urlencoded.
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: false }))
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+app.use('/', require('./routes/homeRouter'))
 
 app.listen(3000, () => {
   console.log('Server started on http://localhost:3000')
