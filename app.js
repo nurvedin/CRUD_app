@@ -5,7 +5,7 @@ const hbs = require('express-hbs')
 const path = require('path')
 const mongoose = require('./config/mongoose.js')
 const app = express()
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 
 // Connect to the database.
 mongoose.connect().catch(error => {
@@ -28,10 +28,10 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: false }))
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
 
 app.use('/', require('./routes/homeRouter'))
 

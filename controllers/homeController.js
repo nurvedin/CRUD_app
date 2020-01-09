@@ -14,28 +14,7 @@ const index = async (req, res) => {
   res.render('home/index', { viewData })
 }
 
-/*
-const addSnippet = (req, res) => {
-  res.render('partials/add')
-}
-*/
-/*
-  const code = [{
-    author: 'Nurvedin',
-    snippet: 'app.use(express.urlencoded({ extended: true }))'
-  },
-  {
-    author: 'Merita',
-    snippet: 'app.use(express.urlencoded({ extended: true }))'
-  },
-  {
-    author: 'Esma',
-    snippet: 'app.use(express.urlencoded({ extended: true }))'
-  }
-  ]
-*/
-
-const addSnippet = async (req, res) => {
+const create = async (req, res) => {
   const viewData = {
     author: '',
     snippet: ''
@@ -59,22 +38,17 @@ const createPost = async (req, res) => {
   }
 }
 
-module.exports = { index, addSnippet, createPost }
+const view = (req, res) => {
+  Snippet.findById(req.params.id, (err, snippets) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.render('home/viewSnippet', {
+        author: snippets.author,
+        snippet: snippets.snippet
+      })
+    }
+  })
+}
 
-/*
-  try {
-    const snippet = new Snippet({
-      snippet: req.body.snippet
-    })
-
-    await snippet.save()
-
-    // ...and redirect and show a message.
-    res.redirect('.')
-  } catch (error) {
-    return res.render('home/add', {
-      author: req.body.author,
-      snippet: req.body.snippet
-    })
-  }
-*/
+module.exports = { index, create, createPost, view }

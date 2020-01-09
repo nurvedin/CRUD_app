@@ -12,7 +12,7 @@
     {{#if viewData.snippets.length}}
     {{#each viewData.snippets}}
     <tr>
-      <td>{{this.author}}</td>
+      <td><a href="/viewSnippet/{{this.id}}">{{this.author}}</a></td>
       <td>{{this.snippet}}</td>
     </tr>
     {{/each}}
