@@ -12,4 +12,8 @@ router.route('/add')
 
 router.route('/viewSnippet/:id').get(require('../controllers/homeController').view)
 
+router.route('/edit/:id')
+  .get(require('../controllers/homeController').edit)
+  .post(require('../controllers/homeController').editPost)
+
 module.exports = router

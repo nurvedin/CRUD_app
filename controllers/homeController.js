@@ -32,7 +32,7 @@ const createPost = async (req, res) => {
     await snippet.save()
 
     // ...and redirect and show a message.
-    res.redirect('.')
+    res.redirect('/')
   } catch (error) {
     console.log(error)
   }
@@ -44,6 +44,7 @@ const view = (req, res) => {
       console.log(err)
     } else {
       res.render('home/viewSnippet', {
+        id: snippets.id,
         author: snippets.author,
         snippet: snippets.snippet
       })
@@ -51,4 +52,29 @@ const view = (req, res) => {
   })
 }
 
-module.exports = { index, create, createPost, view }
+const edit = (req, res) => {
+  Snippet.findById(req.params.id, (err, snippets) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.render('home/edit', {
+        id: snippets.id,
+        author: snippets.author,
+        snippet: snippets.snippet
+      })
+    }
+  })
+}
+
+const editPost = async (req, res) => {
+  await Snippet.updateOne({ _id: req.params.id },
+    { $set: { snippet: req.body.snippet } }, { new: true }, (err, doc) => {
+      if (err) {
+        console.log(err)
+      } else {
+        res.redirect('/')
+      }
+    })
+}
+
+module.exports = { index, create, createPost, view, edit, editPost }
