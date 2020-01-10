@@ -77,4 +77,15 @@ const editPost = async (req, res) => {
     })
 }
 
-module.exports = { index, create, createPost, view, edit, editPost }
+const deleteSnippet = async (req, res) => {
+  await Snippet.deleteOne({ _id: req.params.id },
+    { $set: { snippet: req.body.snippet } }, (err, doc) => {
+      if (err) {
+        console.log(err)
+      } else {
+        res.redirect('/')
+      }
+    })
+}
+
+module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet }
