@@ -4,9 +4,8 @@ const express = require('express')
 const hbs = require('express-hbs')
 const path = require('path')
 const mongoose = require('./config/mongoose.js')
-// const session = require('express-session')
+const session = require('express-session')
 const app = express()
-// const bodyParser = require('body-parser')
 
 // Connect to the database.
 mongoose.connect().catch(error => {
@@ -28,11 +27,15 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Parse application/x-www-form-urlencoded.
 app.use(express.urlencoded({ extended: false }))
 
-// parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }))
+// setup and use session middleware (https://github.com/expressjs/session)
+const sessionOptions = {
+  secret: 'keyboard cat', // Change it!!! The secret is used to hash the session with HMAC.
+  resave: false, // Resave even if a request is not changing the session.
+  saveUninitialized: true, // Don't save a created but not modified session.
+  cookie: { secure: true }
+}
 
-// parse application/json
-// app.use(bodyParser.json())
+app.use(session(sessionOptions))
 
 app.use('/', require('./routes/homeRouter'))
 

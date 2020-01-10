@@ -1,6 +1,8 @@
 'use strict'
 
 const Snippet = require('../models/snippet')
+const User = require('../models/users')
+// const bcrypt = require('bcryptjs')
 
 const index = async (req, res) => {
   const viewData = {
@@ -87,15 +89,26 @@ const deleteSnippet = async (req, res) => {
     })
 }
 
-const login = async (req, res) => {
-  await Snippet.deleteOne({ _id: req.params.id },
-    { $set: { snippet: req.body.snippet } }, (err, doc) => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.redirect('/')
-      }
-    })
+const register = async (req, res) => {
+  await res.render('home/register')
 }
 
-module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login }
+const registerPost = async (req, res) => {
+  const newUser = new User({
+    username: req.body.username,
+    password: req.body.password
+  })
+
+  if (req.body.password === req.body.password2) {
+    await newUser.save()
+    res.render('home/login')
+  } else {
+    console.log('Passwords do not match')
+  }
+}
+
+const login = async (req, res) => {
+  await res.render('home/login')
+}
+
+module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login, register, registerPost }

@@ -17,6 +17,10 @@ router.route('/edit/:id')
 
 router.route('/delete/:id').get(require('../controllers/homeController').deleteSnippet)
 
+router.get('/register', require('../controllers/homeController').register)
+
+router.post('/register', require('../controllers/homeController').registerPost)
+
 router.get('/login', require('../controllers/homeController').login)
 
 module.exports = router
