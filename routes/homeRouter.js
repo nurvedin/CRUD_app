@@ -17,4 +17,6 @@ router.route('/edit/:id')
 
 router.route('/delete/:id').get(require('../controllers/homeController').deleteSnippet)
 
+router.get('/login', require('../controllers/homeController').login)
+
 module.exports = router
