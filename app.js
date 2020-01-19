@@ -37,6 +37,15 @@ const sessionOptions = {
 
 app.use(session(sessionOptions))
 
+app.use((req, res, next) => {
+  // flash messages - survives only a round trip
+  if (req.session.flash) {
+    res.locals.flash = req.session.flash
+    delete req.session.flash
+  }
+  next()
+})
+
 app.use('/', require('./routes/homeRouter'))
 
 app.listen(3000, () => {
