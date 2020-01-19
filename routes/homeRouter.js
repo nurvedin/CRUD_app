@@ -23,4 +23,6 @@ router.post('/register', require('../controllers/homeController').registerPost)
 
 router.get('/login', require('../controllers/homeController').login)
 
+router.post('/login', require('../controllers/homeController').loginPost)
+
 module.exports = router

@@ -111,4 +111,16 @@ const login = async (req, res) => {
   await res.render('home/login')
 }
 
-module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login, register, registerPost }
+const loginPost = async (req, res, done) => {
+  const checkUser = await User.findOne({ username: req.body.username })
+  const checkPassword = await checkUser.checkPasswords(req.body.password)
+
+  if (!checkUser) {
+    console.log('No user found')
+  } else if (!checkPassword) {
+    console.log('Wrong password')
+  } else {
+    res.redirect('/')
+  }
+}
+module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login, register, registerPost, loginPost }

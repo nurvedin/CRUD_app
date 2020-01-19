@@ -25,6 +25,20 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
+/*
+userSchema.methods.comparePassword = function (password, cb) {
+  bcrypt.compare(password, this.password, function (err, isMatch) {
+    if (err) {
+      return cb(err, false, { message: 'Wrong password' })
+    }
+    return cb(null, isMatch)
+  })
+}
+*/
+userSchema.method('checkPasswords', async function (password) {
+  return bcrypt.compare(password, this.password)
+})
+
 // Create a model using the schema.
 const User = mongoose.model('User', userSchema)
 
