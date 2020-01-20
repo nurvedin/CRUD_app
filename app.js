@@ -30,15 +30,15 @@ app.use(express.urlencoded({ extended: false }))
 // setup and use session middleware (https://github.com/expressjs/session)
 const sessionOptions = {
   secret: 'keyboard cat', // Change it!!! The secret is used to hash the session with HMAC.
-  resave: false, // Resave even if a request is not changing the session.
-  saveUninitialized: true, // Don't save a created but not modified session.
-  cookie: { secure: true }
+  resave: true, // Resave even if a request is not changing the session.
+  saveUninitialized: true // Don't save a created but not modified session.
 }
 
 app.use(session(sessionOptions))
 
 app.use((req, res, next) => {
   // flash messages - survives only a round trip
+  res.locals.user = req.session.user
   if (req.session.flash) {
     res.locals.flash = req.session.flash
     delete req.session.flash

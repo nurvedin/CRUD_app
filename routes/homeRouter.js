@@ -25,4 +25,6 @@ router.get('/login', require('../controllers/homeController').login)
 
 router.post('/login', require('../controllers/homeController').loginPost)
 
+router.get('/logout', require('../controllers/homeController').logout)
+
 module.exports = router

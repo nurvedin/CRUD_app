@@ -2,7 +2,6 @@
 
 const Snippet = require('../models/snippet')
 const User = require('../models/users')
-// const bcrypt = require('bcryptjs')
 
 const index = async (req, res) => {
   const viewData = {
@@ -13,12 +12,14 @@ const index = async (req, res) => {
         snippet: snippet.snippet
       }))
   }
+  viewData.user = true
+  // console.log(req.session.user)
   res.render('home/index', { viewData })
 }
 
-const create = async (req, res) => {
+const create = async (req, res, ensureAuthentication) => {
   const viewData = {
-    author: '',
+    author: req.session.user,
     snippet: ''
   }
   res.render('home/add', { viewData })
@@ -27,7 +28,7 @@ const create = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const snippet = new Snippet({
-      author: req.body.author,
+      author: req.session.user,
       snippet: req.body.snippet
     })
 
@@ -43,7 +44,7 @@ const createPost = async (req, res) => {
 const view = (req, res) => {
   Snippet.findById(req.params.id, (err, snippets) => {
     if (err) {
-      console.log(err)
+      req.session.flash = { type: 'danger', text: err.message }
     } else {
       res.render('home/viewSnippet', {
         id: snippets.id,
@@ -54,7 +55,7 @@ const view = (req, res) => {
   })
 }
 
-const edit = (req, res) => {
+const edit = (req, res, ensureAuthentication) => {
   Snippet.findById(req.params.id, (err, snippets) => {
     if (err) {
       req.session.flash = { type: 'danger', text: err.message }
@@ -80,7 +81,7 @@ const editPost = async (req, res) => {
     })
 }
 
-const deleteSnippet = async (req, res) => {
+const deleteSnippet = async (req, res, ensureAuthentication) => {
   await Snippet.deleteOne({ _id: req.params.id },
     { $set: { snippet: req.body.snippet } }, (err, doc) => {
       if (err) {
@@ -115,7 +116,7 @@ const login = async (req, res) => {
   await res.render('home/login')
 }
 
-const loginPost = async (req, res, done) => {
+const loginPost = async (req, res) => {
   const checkUser = await User.findOne({ username: req.body.username })
   const checkPassword = await checkUser.checkPasswords(req.body.password)
 
@@ -125,7 +126,24 @@ const loginPost = async (req, res, done) => {
     req.session.flash = { type: 'danger', text: 'Wrong password' }
   } else {
     req.session.flash = { type: 'success', text: 'You logged in successfully.' }
+    req.session.user = req.body.username
     res.redirect('/')
   }
 }
-module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login, register, registerPost, loginPost }
+
+const logout = async (req, res) => {
+  delete req.session.user
+  req.session.flash = { type: 'success', text: 'You logged out.' }
+  res.redirect('/login')
+}
+
+const ensureAuthentication = async (req, res, next) => {
+  if (req.session.user) {
+    next()
+  } else {
+    req.session.flash = { type: 'danger', text: 'Unauthorized, you have to login!' }
+    res.redirect('/login')
+  }
+}
+
+module.exports = { index, create, createPost, view, edit, editPost, deleteSnippet, login, register, registerPost, loginPost, logout, ensureAuthentication }
