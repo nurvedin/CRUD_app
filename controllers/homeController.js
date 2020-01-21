@@ -83,16 +83,23 @@ const editPost = async (req, res) => {
 }
 
 const deleteSnippet = async (req, res, next) => {
-  Snippet.deleteOne({ _id: req.params.id },
-    { $set: { snippet: req.body.snippet } }, (err, doc) => {
-      if (err || req.session.user !== req.body.author) {
-        req.session.flash = { type: 'danger', text: 'Not authorized' }
-        res.redirect('/')
-      } else {
-        req.session.flash = { type: 'success', text: 'Snippet was deleted successfully.' }
-        res.redirect('/')
-      }
-    })
+  Snippet.findById(req.params.id, (err, snippets) => {
+    if (err || req.session.user !== snippets.author) {
+      req.session.flash = { type: 'danger', text: 'Not authorized' }
+      res.redirect('/')
+    } else {
+      Snippet.deleteOne({ _id: req.params.id },
+        { $set: { snippet: req.body.snippet } }, (err, doc) => {
+          if (err) {
+            req.session.flash = { type: 'danger', text: err.message }
+            res.redirect('/')
+          } else {
+            req.session.flash = { type: 'success', text: 'Snippet was deleted successfully.' }
+            res.redirect('/')
+          }
+        })
+    }
+  })
 }
 
 const register = async (req, res) => {
