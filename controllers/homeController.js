@@ -17,7 +17,7 @@ const index = async (req, res) => {
   res.render('home/index', { viewData })
 }
 
-const create = async (req, res, ensureAuthentication) => {
+const create = async (req, res, next) => {
   const viewData = {
     author: req.session.user,
     snippet: ''
@@ -55,10 +55,11 @@ const view = (req, res) => {
   })
 }
 
-const edit = (req, res, ensureAuthentication) => {
+const edit = (req, res, next) => {
   Snippet.findById(req.params.id, (err, snippets) => {
-    if (err) {
-      req.session.flash = { type: 'danger', text: err.message }
+    if (err || req.session.user !== snippets.author) {
+      req.session.flash = { type: 'danger', text: 'Not authorized' }
+      res.redirect('/')
     } else {
       res.render('home/edit', {
         id: snippets.id,
@@ -81,11 +82,12 @@ const editPost = async (req, res) => {
     })
 }
 
-const deleteSnippet = async (req, res, ensureAuthentication) => {
-  await Snippet.deleteOne({ _id: req.params.id },
+const deleteSnippet = async (req, res, next) => {
+  Snippet.deleteOne({ _id: req.params.id },
     { $set: { snippet: req.body.snippet } }, (err, doc) => {
-      if (err) {
-        req.session.flash = { type: 'danger', text: err.message }
+      if (err || req.session.user !== req.body.author) {
+        req.session.flash = { type: 'danger', text: 'Not authorized' }
+        res.redirect('/')
       } else {
         req.session.flash = { type: 'success', text: 'Snippet was deleted successfully.' }
         res.redirect('/')
@@ -132,7 +134,7 @@ const loginPost = async (req, res) => {
 }
 
 const logout = async (req, res) => {
-  delete req.session.user
+  req.session.user = ''
   req.session.flash = { type: 'success', text: 'You logged out.' }
   res.redirect('/login')
 }
