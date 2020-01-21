@@ -109,7 +109,8 @@ const register = async (req, res) => {
 const registerPost = async (req, res) => {
   const newUser = new User({
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
+    password2: req.body.password2
   })
 
   if (req.body.password === req.body.password2) {
@@ -118,6 +119,7 @@ const registerPost = async (req, res) => {
     res.render('home/login')
   } else {
     req.session.flash = { type: 'danger', text: 'Passwords do not match' }
+    res.redirect('/register')
   }
 }
 
@@ -126,18 +128,43 @@ const login = async (req, res) => {
 }
 
 const loginPost = async (req, res) => {
-  const checkUser = await User.findOne({ username: req.body.username })
-  const checkPassword = await checkUser.checkPasswords(req.body.password)
+  const password = req.body.password
+  const username = req.body.username
 
-  if (!checkUser) {
-    req.session.flash = { type: 'danger', text: 'No user found' }
-  } else if (!checkPassword) {
-    req.session.flash = { type: 'danger', text: 'Wrong password' }
+  if (username && password) {
+    const checkUser = await User.findOne({ username })
+    if (checkUser) {
+      console.log(checkUser)
+      const checkPassword = await checkUser.checkPasswords(req.body.password)
+      if (checkPassword) {
+        console.log('HÄR')
+        req.session.flash = { type: 'success', text: 'You logged in successfully.' }
+        req.session.user = req.body.username
+        res.redirect('/')
+      } else {
+        req.session.flash = { type: 'danger', text: 'Wrong password' }
+        res.redirect('/login')
+      }
+    } else {
+      req.session.flash = { type: 'danger', text: 'No user found' }
+      res.redirect('/login')
+    }
   } else {
-    req.session.flash = { type: 'success', text: 'You logged in successfully.' }
-    req.session.user = req.body.username
-    res.redirect('/')
+    req.session.flash = { type: 'danger', text: 'Missing credentials' }
+    res.redirect('/login')
   }
+  // const checkUser = await User.findOne({ username: req.body.username })
+  // const checkPassword = await checkUser.checkPasswords(req.body.password)
+
+  // if (!checkUser) {
+  //  req.session.flash = { type: 'danger', text: 'No user found' }
+  // } else if (!checkPassword) {
+  //  req.session.flash = { type: 'danger', text: 'Wrong password' }
+  // } else {
+  //  req.session.flash = { type: 'success', text: 'You logged in successfully.' }
+  //  req.session.user = req.body.username
+  //  res.redirect('/')
+  // }
 }
 
 const logout = async (req, res) => {
