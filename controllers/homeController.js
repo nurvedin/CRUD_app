@@ -13,7 +13,6 @@ const index = async (req, res) => {
       }))
   }
   viewData.user = true
-  // console.log(req.session.user)
   res.render('home/index', { viewData })
 }
 
@@ -134,10 +133,8 @@ const loginPost = async (req, res) => {
   if (username && password) {
     const checkUser = await User.findOne({ username })
     if (checkUser) {
-      console.log(checkUser)
       const checkPassword = await checkUser.checkPasswords(req.body.password)
       if (checkPassword) {
-        console.log('HÄR')
         req.session.flash = { type: 'success', text: 'You logged in successfully.' }
         req.session.user = req.body.username
         res.redirect('/')
@@ -153,18 +150,6 @@ const loginPost = async (req, res) => {
     req.session.flash = { type: 'danger', text: 'Missing credentials' }
     res.redirect('/login')
   }
-  // const checkUser = await User.findOne({ username: req.body.username })
-  // const checkPassword = await checkUser.checkPasswords(req.body.password)
-
-  // if (!checkUser) {
-  //  req.session.flash = { type: 'danger', text: 'No user found' }
-  // } else if (!checkPassword) {
-  //  req.session.flash = { type: 'danger', text: 'Wrong password' }
-  // } else {
-  //  req.session.flash = { type: 'success', text: 'You logged in successfully.' }
-  //  req.session.user = req.body.username
-  //  res.redirect('/')
-  // }
 }
 
 const logout = async (req, res) => {
